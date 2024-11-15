@@ -24,6 +24,15 @@ interface TradeState {
   getTotalPnL: () => number;
 }
 
+const calculateUnits = (
+  amount: number,
+  entryFee: number,
+  entry: number
+): number => {
+  const netAmount = Number((amount - entryFee).toFixed(8));
+  return Number((netAmount / entry).toFixed(8));
+};
+
 export const useTradeStore = create(
   persist<TradeState>(
     (set, get) => ({
@@ -31,8 +40,14 @@ export const useTradeStore = create(
 
       addTrade: (tradeData) =>
         set((state) => {
-          const netAmount = tradeData.amount - tradeData.entryFee;
-          const units = netAmount / tradeData.entry;
+          const netAmount = Number(
+            (tradeData.amount - tradeData.entryFee).toFixed(8)
+          );
+          const units = calculateUnits(
+            tradeData.amount,
+            tradeData.entryFee,
+            tradeData.entry
+          );
 
           const newTrade: Trade = {
             id: crypto.randomUUID(),
@@ -53,9 +68,14 @@ export const useTradeStore = create(
               const updatedTrade = { ...trade, ...updates };
 
               // Recalculate values
-              updatedTrade.netAmount =
-                updatedTrade.amount - updatedTrade.entryFee;
-              updatedTrade.units = updatedTrade.netAmount / updatedTrade.entry;
+              updatedTrade.netAmount = Number(
+                (updatedTrade.amount - updatedTrade.entryFee).toFixed(8)
+              );
+              updatedTrade.units = calculateUnits(
+                updatedTrade.amount,
+                updatedTrade.entryFee,
+                updatedTrade.entry
+              );
 
               if (updatedTrade.exit && updatedTrade.exitFee !== undefined) {
                 updatedTrade.totalAmount =
