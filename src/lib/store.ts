@@ -13,6 +13,7 @@ interface Trade {
   totalAmount?: number;
   netTotalAmount?: number;
   profitLoss?: number;
+  completed?: boolean;
 }
 
 interface TradeState {
@@ -54,6 +55,7 @@ export const useTradeStore = create(
             ...tradeData,
             netAmount,
             units,
+            completed: false,
           };
 
           return { trades: [...state.trades, newTrade] };

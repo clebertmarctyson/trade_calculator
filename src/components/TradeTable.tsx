@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { useTradeStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
@@ -103,8 +105,27 @@ export const TradeTable = () => {
       {/* Trades List */}
       <div className="space-y-4">
         {trades.map((trade) => (
-          <Card key={trade.id} className="overflow-hidden">
+          <Card
+            key={trade.id}
+            className={`overflow-hidden ${
+              trade.completed && "border-l-2 border-l-green-500"
+            }`}
+          >
             <CardContent className="p-6">
+              <div className="my-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    updateTrade(trade.id, {
+                      completed: !trade.completed,
+                    })
+                  }
+                >
+                  {trade.completed ? "Completed ✔" : "Pending ..."}
+                </Button>
+              </div>
+
               <div className="flex justify-between items-start mb-4">
                 <div className="text-sm font-medium text-muted-foreground">
                   Trade ID: {trade.id.slice(0, 8)}...
@@ -122,15 +143,45 @@ export const TradeTable = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-sm font-medium">Entry Price:</label>
-                  <div className="font-mono">${trade.entry.toFixed(2)}</div>
+                  <Input
+                    type="number"
+                    value={trade.entry}
+                    onChange={(e) =>
+                      updateTrade(trade.id, {
+                        entry: parseFloat(e.target.value),
+                      })
+                    }
+                    step="0.01"
+                    className="font-mono"
+                  />
                 </div>
                 <div className="space-y-1">
                   <label className="text-sm font-medium">Amount:</label>
-                  <div className="font-mono">${trade.amount.toFixed(2)}</div>
+                  <Input
+                    type="number"
+                    value={trade.amount}
+                    onChange={(e) =>
+                      updateTrade(trade.id, {
+                        amount: parseFloat(e.target.value),
+                      })
+                    }
+                    step="0.01"
+                    className="font-mono"
+                  />
                 </div>
                 <div className="space-y-1">
                   <label className="text-sm font-medium">Entry Fee:</label>
-                  <div className="font-mono">${trade.entryFee.toFixed(2)}</div>
+                  <Input
+                    type="number"
+                    value={trade.entryFee}
+                    onChange={(e) =>
+                      updateTrade(trade.id, {
+                        entryFee: parseFloat(e.target.value),
+                      })
+                    }
+                    step="0.01"
+                    className="font-mono"
+                  />
                 </div>
                 <div className="space-y-1">
                   <label className="text-sm font-medium">Net Amount:</label>
@@ -226,3 +277,5 @@ export const TradeTable = () => {
     </div>
   );
 };
+
+export default TradeTable;
